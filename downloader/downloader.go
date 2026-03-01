@@ -653,6 +653,15 @@ func (downloader *Downloader) Download(data *extractors.Data) error {
 		return nil
 	}
 
+	// Check for ffmpeg before downloading if it will be needed for merging or subtitle embedding
+	needMerge := len(stream.Parts) > 1 && data.Type == extractors.DataTypeVideo && !downloader.option.AudioOnly
+	needEmbed := downloader.option.EmbedSubtitle && len(subtitlePaths) > 0
+	if needMerge || needEmbed {
+		if err := utils.CheckFFmpeg(); err != nil {
+			return err
+		}
+	}
+
 	downloader.Bar = progressBar(stream.Size)
 	if !downloader.option.Silent {
 		downloader.Bar.Start()
