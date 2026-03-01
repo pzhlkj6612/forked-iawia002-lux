@@ -6,7 +6,6 @@ import (
 )
 
 func TestCheckFFmpeg(t *testing.T) {
-	// Save original PATH and restore after test
 	originalPath := os.Getenv("PATH")
 
 	t.Run("ffmpeg not found", func(t *testing.T) {
@@ -19,8 +18,7 @@ func TestCheckFFmpeg(t *testing.T) {
 	})
 
 	t.Run("ffmpeg found", func(t *testing.T) {
-		// Restore original PATH which should have ffmpeg in CI
-		os.Setenv("PATH", originalPath)
+		t.Setenv("PATH", originalPath)
 		err := CheckFFmpeg()
 		// We don't fail if ffmpeg is not installed in the test environment,
 		// but if it is installed, the check should pass
