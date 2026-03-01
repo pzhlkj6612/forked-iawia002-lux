@@ -28,6 +28,18 @@ func findFFmpegExecutable() string {
 	return ffmpegFileName
 }
 
+// CheckFFmpeg checks if ffmpeg is available in the current directory or system PATH.
+// It returns an error if ffmpeg cannot be found, allowing callers to fail early
+// before starting downloads that require ffmpeg for merging or subtitle embedding.
+func CheckFFmpeg() error {
+	executable := findFFmpegExecutable()
+	_, err := exec.LookPath(executable)
+	if err != nil {
+		return errors.New("ffmpeg not found in current directory or PATH; it is required for merging video parts and embedding subtitles")
+	}
+	return nil
+}
+
 func runMergeCmd(cmd *exec.Cmd, paths []string, mergeFilePath string) error {
 	var stderr bytes.Buffer
 	cmd.Stderr = &stderr
